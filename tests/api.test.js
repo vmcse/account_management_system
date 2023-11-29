@@ -3,12 +3,14 @@ const mongoose = require("mongoose");
 const User = require("../models/user");
 const app = require("../app");
 const api = supertest(app);
+const test_helper = require("./test_helper");
+
+beforeEach(async () => {
+  await User.deleteMany({});
+  await User.insertMany(test_helper.initialUsers);
+});
 
 describe("usersRouter", () => {
-  beforeEach(async () => {
-    await User.deleteMany({});
-  });
-
   test("successfully creates a new user", async () => {
     const newUser = {
       username: "admin",
@@ -23,7 +25,7 @@ describe("usersRouter", () => {
 
     const savedUser = await User.find({});
     const username = savedUser.map((u) => u.username);
-    expect(savedUser).toHaveLength(1);
+    expect(savedUser).toHaveLength(test_helper.initialUsers.length + 1);
     expect(username).toContain(newUser.username);
   });
 });
@@ -31,7 +33,7 @@ describe("usersRouter", () => {
 describe("loginRouter", () => {
   test("user logged in successfully", async () => {
     const user = {
-      username: "admin",
+      username: "newUser1",
       password: "1234",
     };
 
@@ -39,6 +41,32 @@ describe("loginRouter", () => {
       .post("/login")
       .send(user)
       .expect(200)
+      .expect("Content-Type", /application\/json/);
+  });
+
+  test("user login fails for invalid password", async () => {
+    const user = {
+      username: "newUser1",
+      password: "12345",
+    };
+
+    await api
+      .post("/login")
+      .send(user)
+      .expect(401)
+      .expect("Content-Type", /application\/json/);
+  });
+
+  test("user login fails for invalid username", async () => {
+    const user = {
+      username: "newUser3",
+      password: "1234",
+    };
+
+    await api
+      .post("/login")
+      .send(user)
+      .expect(401)
       .expect("Content-Type", /application\/json/);
   });
 });
