@@ -3,6 +3,7 @@ const path = require("path");
 const User = require("../models/user");
 const bycrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const config = require("../utils/config");
 
 const distFolder = path.resolve(__dirname, "../dist/");
 
@@ -29,7 +30,7 @@ loginRouter.post("/", async (request, response, next) => {
     id: user.id,
   };
 
-  const token = jwt.sign(userForToken, process.env.SECRET, {
+  const token = jwt.sign(userForToken, config.SECRET, {
     expiresIn: 60 * 60,
   });
 
