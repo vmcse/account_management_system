@@ -4,6 +4,7 @@ const cors = require("cors");
 const usersRouter = require("./controllers/usersRouter");
 const config = require("./utils/config");
 const mongoose = require("mongoose");
+const loginRouter = require("./controllers/loginRouter");
 
 app.use(express.json());
 app.use(cors());
@@ -19,5 +20,6 @@ mongoose
   .catch((error) => console.error(error.message));
 
 app.use("/api/users", usersRouter);
+app.use("/login", loginRouter);
 
 module.exports = app;
