@@ -21,4 +21,10 @@ usersRouter.post("/", async (request, response) => {
   response.status(201).json(savedUser);
 });
 
+usersRouter.post("/:id", async (request, response, next) => {
+  const returnedUser = await User.findById(request.params.id);
+
+  response.status(201).json(returnedUser);
+});
+
 module.exports = usersRouter;
