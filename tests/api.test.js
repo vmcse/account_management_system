@@ -11,6 +11,21 @@ beforeEach(async () => {
 });
 
 describe("usersRouter", () => {
+  test("successfully rejects a duplicate username", async () => {
+    const newUser = {
+      username: "newUser1",
+      password: "1234",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(result.body.error).toEqual("username must be unique");
+  });
+
   test("successfully creates a new user", async () => {
     const newUser = {
       username: "admin",
@@ -37,11 +52,13 @@ describe("loginRouter", () => {
       password: "1234",
     };
 
-    await api
+    const result = await api
       .post("/login")
       .send(user)
       .expect(200)
       .expect("Content-Type", /application\/json/);
+
+    console.log(result.body);
   });
 
   test("user login fails for invalid password", async () => {

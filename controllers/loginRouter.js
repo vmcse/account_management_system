@@ -6,11 +6,11 @@ const jwt = require("jsonwebtoken");
 
 const distFolder = path.resolve(__dirname, "../dist/");
 
-loginRouter.get("/", (request, response) => {
+loginRouter.get("/", (request, response, next) => {
   response.sendFile(distFolder + "/login.html");
 });
 
-loginRouter.post("/", async (request, response) => {
+loginRouter.post("/", async (request, response, next) => {
   const { username, password } = request.body;
 
   const user = await User.findOne({ username });

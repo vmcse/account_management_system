@@ -7,7 +7,7 @@ const requestLogger = (request, response, next) => {
 };
 
 const errorHandler = (error, request, response, next) => {
-  //logger.error(error.message);
+  console.error(error.message);
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
@@ -17,6 +17,8 @@ const errorHandler = (error, request, response, next) => {
     return response.status(401).json({ error: "invalid token" });
   } else if (error.name === "TokenExpiredError") {
     return response.status(401).json({ error: "token expired" });
+  } else if (error.name === "MongoServerError") {
+    return response.status(400).json({ error: "username must be unique" });
   }
 
   next(error);
